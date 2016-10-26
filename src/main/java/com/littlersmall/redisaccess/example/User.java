@@ -13,4 +13,6 @@ import lombok.NoArgsConstructor;
 public class User {
     long userId;
     String name;
+
+    long test;
 }

@@ -25,4 +25,10 @@ public interface DataAccess<T> {
     boolean tryLock(String key, T value, int timeout);
 
     void unLock(String key);
+
+    //T 为 int or long 类型可用
+    long increment(String key, int validTime);
+
+    //方便测试
+    boolean flushDb();
 }

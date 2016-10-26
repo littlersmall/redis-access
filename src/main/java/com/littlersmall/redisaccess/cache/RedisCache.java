@@ -25,4 +25,20 @@ public class RedisCache {
 
         return dataAccess.setNX(cacheKey, cacheValue, validSecond);
     }
+
+    public boolean hasKey(String key) {
+        String cacheKey = "cached#" + key;
+
+        return null != dataAccess.get(key);
+    }
+
+    public void delete(String key) {
+        String cacheKey = "cached#" + key;
+
+        try {
+            dataAccess.delete(cacheKey);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }

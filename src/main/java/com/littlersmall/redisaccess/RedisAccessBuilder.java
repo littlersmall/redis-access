@@ -1,7 +1,10 @@
 package com.littlersmall.redisaccess;
 
 import com.littlersmall.redisaccess.common.Constants;
+import org.springframework.dao.DataAccessException;
+import org.springframework.data.redis.connection.RedisConnection;
 import org.springframework.data.redis.core.ListOperations;
+import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
@@ -93,7 +96,6 @@ public class RedisAccessBuilder<T> {
             @Override
             public boolean setNX(String key, T value, int validTime) {
                 if (valueOperations.setIfAbsent(key, value)) {
-                    //todo throw exception
                     if (validTime > 0) {
                         return redisTemplate.expire(key, validTime, TimeUnit.SECONDS);
                     } else {
@@ -140,6 +142,28 @@ public class RedisAccessBuilder<T> {
                 String lockKey = "locked#" + key;
 
                 delete(lockKey);
+            }
+
+            @Override
+            public long increment(String key, int validTime) {
+                redisTemplate.expire(key, validTime, TimeUnit.SECONDS);
+
+                return valueOperations.increment(key, 1);
+            }
+
+            @Override
+            public boolean flushDb() {
+                return redisTemplate.execute(new RedisCallback<Boolean>() {
+                    public Boolean doInRedis(RedisConnection connection) {
+                        try {
+                            connection.flushDb();
+                        } catch (DataAccessException e) {
+                            return false;
+                        }
+
+                        return true;
+                    }
+                });
             }
         };
     }
