@@ -29,7 +29,7 @@ public class RedisCache {
     public boolean hasKey(String key) {
         String cacheKey = "cached#" + key;
 
-        return null != dataAccess.get(key);
+        return null != dataAccess.get(cacheKey);
     }
 
     public void delete(String key) {

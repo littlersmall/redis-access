@@ -146,9 +146,10 @@ public class RedisAccessBuilder<T> {
 
             @Override
             public long increment(String key, int validTime) {
+                long res = valueOperations.increment(key, 1);
                 redisTemplate.expire(key, validTime, TimeUnit.SECONDS);
 
-                return valueOperations.increment(key, 1);
+                return res;
             }
 
             @Override
